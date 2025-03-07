@@ -34,14 +34,15 @@ jobs:
       run: |
         tar -czvf go-ci-cd-app.tar.gz go-ci-cd-app
 
-    - name: Build Docker image
-      run: |
-        docker build -t ghcr.io/Nava200/go-ci-cd-app:latest .
+   - name: Build Docker image
+     run: |
+       docker build -t ghcr.io/nava200/go-ci-cd-app:latest .
+       docker push ghcr.io/nava200/go-ci-cd-app:latest
 
-    - name: Push Docker image to GitHub Container Registry
-      run: |
-        echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-        docker push ghcr.io/Nava200/go-ci-cd-app:latest
+   - name: Push Docker image to GitHub Container Registry
+     run: |
+       echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+       docker push ghcr.io/Nava200/go-ci-cd-app:latest
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
