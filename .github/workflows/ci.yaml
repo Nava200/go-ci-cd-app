@@ -1,0 +1,56 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: '1.20'
+
+    - name: Install dependencies
+      run: go mod tidy
+
+    - name: Build Go app
+      run: go build -o app .
+
+    - name: Create ZIP file
+      run: zip app.zip app
+
+    - name: Create TAR.GZ file
+      run: tar -czvf app.tar.gz app
+
+    - name: Build Docker image
+      run: |
+        echo "FROM golang:1.20-alpine" > Dockerfile
+        echo "WORKDIR /app" >> Dockerfile
+        echo "COPY . ." >> Dockerfile
+        echo "CMD [\"./app\"]" >> Dockerfile
+        docker build -t ghcr.io/Nava200/go-ci-cd-app:latest .
+
+    - name: Push Docker image to GitHub Container Registry
+      run: |
+        echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u Nava200 --password-stdin
+        docker push ghcr.io/Nava200/go-ci-cd-app:latest
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: app-artifacts
+        path: |
+          app.zip
+          app.tar.gz
+
