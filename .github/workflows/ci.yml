@@ -1,0 +1,52 @@
+name: Go CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: '1.18'
+
+    - name: Build Go app
+      run: |
+        go mod tidy
+        go build -o go-ci-cd-app
+
+    - name: Create ZIP file
+      run: |
+        zip go-ci-cd-app.zip go-ci-cd-app
+
+    - name: Create TAR.GZ file
+      run: |
+        tar -czvf go-ci-cd-app.tar.gz go-ci-cd-app
+
+    - name: Build Docker image
+      run: |
+        docker build -t ghcr.io/Nava200/go-ci-cd-app:latest .
+
+    - name: Push Docker image to GitHub Container Registry
+      run: |
+        echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+        docker push ghcr.io/Nava200/go-ci-cd-app:latest
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: go-ci-cd-app
+        path: |
+          go-ci-cd-app.zip
+          go-ci-cd-app.tar.gz
