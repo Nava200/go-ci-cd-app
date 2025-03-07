@@ -3,10 +3,10 @@ name: Go CI/CD Workflow
 on:
   push:
     branches:
-      - master
+      - main
   pull_request:
     branches:
-      - master
+      - main
 
 jobs:
   build:
@@ -37,10 +37,10 @@ jobs:
       # Build and push Docker image to GitHub Container Registry
       - name: Build and push Docker image
         run: |
-          docker build -t ghcr.io/Nava200/go-ci-cd-app:latest .
-          docker push ghcr.io/Nava200/go-ci-cd-app:latest
+          docker build -t ghcr.io/nava200/go-ci-cd-app:latest .
+          docker push ghcr.io/nava200/go-ci-cd-app:latest
 
-      # Create a new Git tag for the release
+      # Create a Git tag for the release
       - name: Create Git tag
         run: |
           TAG_NAME="v$(date +'%Y%m%d%H%M%S')"
