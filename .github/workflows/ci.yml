@@ -44,7 +44,7 @@ jobs:
         docker push ghcr.io/Nava200/go-ci-cd-app:latest
 
     - name: Upload artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: go-ci-cd-app
         path: |
