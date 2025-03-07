@@ -1,4 +1,3 @@
-
 name: Go CI/CD Workflow
 
 on:
@@ -34,6 +33,11 @@ jobs:
           go build -o go-ci-cd-app main.go
           zip go-ci-cd-app.zip go-ci-cd-app
           tar -czvf go-ci-cd-app.tar.gz go-ci-cd-app
+
+      # Log in to GitHub Container Registry
+      - name: Log in to GitHub Container Registry
+        run: |
+          echo ${{ secrets.MYPROJECT_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
       # Build and push Docker image to GitHub Container Registry
       - name: Build and push Docker image
