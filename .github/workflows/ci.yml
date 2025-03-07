@@ -37,18 +37,17 @@ jobs:
       # Build and push Docker image to GitHub Container Registry
       - name: Build and push Docker image
         run: |
-          echo ${{ secrets.MYPROJECT_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-          docker build -t ghcr.io/nava200/go-ci-cd-app:latest .
-          docker push ghcr.io/nava200/go-ci-cd-app:latest
+          docker build -t ghcr.io/Nava200/go-ci-cd-app:latest .
+          docker push ghcr.io/Nava200/go-ci-cd-app:latest
 
-      # Create a tag based on the current timestamp (or other tag strategy)
+      # Create a new Git tag for the release
       - name: Create Git tag
-        id: create_tag
         run: |
           TAG_NAME="v$(date +'%Y%m%d%H%M%S')"
           git tag $TAG_NAME
           git push origin $TAG_NAME
-        continue-on-error: true  # This allows the workflow to proceed even if there's an error creating the tag.
+        env:
+          GITHUB_TOKEN: ${{ secrets.MYPROJECT_TOKEN }}
 
       # Upload artifacts to GitHub Releases
       - name: Upload artifacts
@@ -58,4 +57,4 @@ jobs:
             go-ci-cd-app.zip
             go-ci-cd-app.tar.gz
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.MYPROJECT_TOKEN }}
