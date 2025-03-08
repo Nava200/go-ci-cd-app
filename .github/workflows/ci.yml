@@ -10,7 +10,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest  # GitHub Actions uses Ubuntu for runners, CentOS is for local setup
 
     steps:
       # Checkout code
@@ -27,7 +27,7 @@ jobs:
       - name: Install dependencies
         run: go mod tidy
 
-      # Build Go application, zip it and create a tar.gz
+      # Build Go application, zip it, and create a tar.gz
       - name: Build Go application and create artifacts
         run: |
           go build -o go-ci-cd-app main.go
@@ -59,7 +59,7 @@ jobs:
             go-ci-cd-app.tar.gz
         env:
           GITHUB_TOKEN: ${{ secrets.MYPROJECT_TOKEN }}
-      
+
       # Verify artifact creation (Optional step to check if files are created successfully)
       - name: Verify artifact creation
         run: |
