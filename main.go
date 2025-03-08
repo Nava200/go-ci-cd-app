@@ -1,8 +1,13 @@
 package main
 
-import "fmt"
+import (
+    "fmt"
+    "github.com/gorilla/mux"
+)
 
 func main() {
-    fmt.Println("Hello, GitHub Actions!")
+    fmt.Println("Hello, World!")
+    r := mux.NewRouter()
+    fmt.Println(r)
 }
 
