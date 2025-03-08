@@ -17,18 +17,18 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      # Set up Go
+      # Set up Go (updated to version 1.20 to match Dockerfile)
       - name: Set up Go
         uses: actions/setup-go@v2
         with:
-          go-version: '1.18'
+          go-version: '1.20'
 
       # Install dependencies
       - name: Install dependencies
         run: go mod tidy
 
-      # Build Go application
-      - name: Build Go application
+      # Build Go application, zip it and create a tar.gz
+      - name: Build Go application and create artifacts
         run: |
           go build -o go-ci-cd-app main.go
           zip go-ci-cd-app.zip go-ci-cd-app
@@ -38,6 +38,7 @@ jobs:
       - name: Build and push Docker image
         run: |
           docker build -t ghcr.io/nava200/go-ci-cd-app:latest .
+          echo ${{ secrets.MYPROJECT_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
           docker push ghcr.io/nava200/go-ci-cd-app:latest
 
       # Create a Git tag for the release
@@ -58,3 +59,8 @@ jobs:
             go-ci-cd-app.tar.gz
         env:
           GITHUB_TOKEN: ${{ secrets.MYPROJECT_TOKEN }}
+      
+      # Verify artifact creation (Optional step to check if files are created successfully)
+      - name: Verify artifact creation
+        run: |
+          ls -l go-ci-cd-app.zip go-ci-cd-app.tar.gz
